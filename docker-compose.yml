@@ -1,0 +1,63 @@
+# v2 sintax
+version: '2'
+
+# Named volumes
+volumes:
+  # MySQL Data
+  container-mysql-data:
+    driver: local
+
+services:
+  # MySQL (5.7)
+  mysql:
+    image: mysql:5.7
+    container_name: container-mysql
+    volumes:
+      - container-mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=containerdb
+      - MYSQL_DATABASE=containerdb
+      - MYSQL_USER=containerdb
+      - MYSQL_PASSWORD=containerdb
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  # PHP 7.0
+  php:
+    build: ./php/
+    container_name: container-php
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/var/www/html
+    links:
+      - mysql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  web:
+    image: nginx:latest
+    container_name: container-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes_from:
+      - php
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - php
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
