@@ -61,3 +61,13 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: container-phpmyadmin
+    ports:
+        - 8080:80
+    links:
+        - mysql
+    environment:
+        PMA_HOST: mysql
