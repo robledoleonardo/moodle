@@ -4,23 +4,23 @@ version: '2'
 # Named volumes
 volumes:
   # MySQL Data
-  container-mysql-data:
+  container-mysql-dt:
     driver: local
 
 services:
   # MySQL (5.7)
-  mysql:
+  moodledb:
     image: mysql:5.7
-    container_name: container-mysql
+    container_name: container-moodledb
     volumes:
-      - container-mysql-data:/var/lib/mysql
+      - container-mysql-dt:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=containerdb
-      - MYSQL_DATABASE=containerdb
-      - MYSQL_USER=containerdb
-      - MYSQL_PASSWORD=containerdb
+      - MYSQL_DATABASE=moodle
+      - MYSQL_USER=moodle_user
+      - MYSQL_PASSWORD=efBlMFIHmQYH158h
     logging:
       driver: "json-file"
       options:
@@ -35,9 +35,9 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - .:/var/www/html
+      - ./moodle/:/var/www/html
     links:
-      - mysql
+      - moodledb
     logging:
       driver: "json-file"
       options:
@@ -49,8 +49,8 @@ services:
     image: nginx:latest
     container_name: container-nginx
     ports:
+      - "8091:80"
       - "80:80"
-      - "443:443"
     volumes_from:
       - php
     volumes:
@@ -69,6 +69,6 @@ services:
     ports:
         - 8080:80
     links:
-        - mysql
+        - moodledb
     environment:
-        PMA_HOST: mysql
+        PMA_HOST: moodledb

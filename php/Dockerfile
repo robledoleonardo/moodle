@@ -1,4 +1,4 @@
-FROM php:7.0-fpm-jessie
+FROM php:7.1-fpm
 # Install modules
 RUN apt-get update && apt-get install -y \
 	libfreetype6-dev \
@@ -7,6 +7,10 @@ RUN apt-get update && apt-get install -y \
 	libpng-dev \
 	libicu-dev \
 	mysql-client \
+        zip \
+        libzip-dev \
+        && docker-php-ext-configure zip --with-libzip \
+	&& docker-php-ext-install zip \
 	&& docker-php-ext-install pdo_mysql \
 	&& docker-php-ext-install iconv \
 	&& docker-php-ext-configure mcrypt \
